@@ -1,2 +1,5 @@
 # Python_Projects
-Repositorio contem projetos construidos em Python  
+Repositorio que contem projetos construidos em Python
+
+Commit inicial no projeto.
+
