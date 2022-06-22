@@ -12,14 +12,14 @@ Essa issue#2 foi resolvida de forma correta.
 
 Para instalar:
 
-´´´ console
+```console
 python3 -m venv .env
 source .env/bin/activate
 pip install -r requirements-dev.txt
-´´´
+```
 
 Para conferir qualidade do código:
 
-´´´ console
+```console
 flake8
-´´´
+```
