@@ -37,7 +37,8 @@ def escolher_pokemon_inicial(jogador):
 
 
 player1 = criar_jogador()
-player1.mostrar_dinheiro()
-inimigo = Inimigo()
+#player1.mostrar_dinheiro()
+#inimigo = Inimigo()
+#player1.batalhar(inimigo)
 
-player1.batalhar(inimigo)
+player1.explorar()

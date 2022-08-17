@@ -79,6 +79,21 @@ class Player(Personagem):
         self.pokemons.append(pokemon)
         print(f'{self} capturou {pokemon}')
 
+    def explorar(self):
+        if random.random() <= 0.2:
+            pokemon = random.choice(POKEMONS)
+            print(f'Um {pokemon} selvagem apareceu!')
+
+            escolha = input('Deseja capturar (s/n): ')
+            if escolha == 's':
+                if random.random() > 0.5:
+                    self.capturar(pokemon)
+            else:
+                print('Ok, boa viagem!')
+
+        else:
+            print('Voce não encontrou nenhum Pokemon!')
+
     def escolher_pokemon(self):
         self.mostrar_pokemons()
 
