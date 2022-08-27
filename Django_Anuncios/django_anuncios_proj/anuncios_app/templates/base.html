@@ -34,7 +34,7 @@
         <div class="four wide column">
             <div class="ui vertical fluid menu">
                 {% for categoria in categorias %}
-                <a class="item">
+                <a href="{% url 'anuncio_categoria' categoria.id %}" class="item">
                     {{categoria}}
                 </a>
                 {% endfor %}
