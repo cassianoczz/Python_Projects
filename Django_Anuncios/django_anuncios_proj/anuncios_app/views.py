@@ -19,3 +19,11 @@ def anuncio_categoria(response, categoria_id):
     filtro_anuncios = models.Anuncios.objects.filter(categoria=categoria_anuncio)
 
     return render(response, 'home.html', {'categorias': categorias, 'anuncios': filtro_anuncios})
+
+
+def anuncio(response, anuncio_id):
+    anuncio = get_object_or_404(models.Anuncios, id=anuncio_id)
+
+    categorias = models.Categoria.objects.all()
+
+    return render(response, 'anuncio.html', {'categorias': categorias, 'anuncio': anuncio})
