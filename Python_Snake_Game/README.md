@@ -26,6 +26,6 @@ pipenv install
 ```
 
 Executar terminal e siga as instruções:
-'''
+```
 pipenv run python snake.py 
-'''
+```
