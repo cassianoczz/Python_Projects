@@ -4,22 +4,6 @@ import time
 import pygame
 
 
-class Fruta:
-    cor = (255, 0, 0)
-    tamanho = (20, 20)
-
-    def __init__(self):
-        self.textura = pygame.Surface(self.tamanho)
-        self.textura.fill(self.cor)
-
-        posicao_x = random.randint(0, 30) * 20
-        posicao_y = random.randint(0, 16) * 20
-        self.posicao = (posicao_x, posicao_y)
-
-    def desenhar(self, tela_jogo):
-        tela_jogo.blit(self.textura, self.posicao)
-
-
 class Snake:
     cor = (255, 255, 255)
     tamanho = (20, 20)
@@ -86,6 +70,30 @@ class Snake:
         pygame.display.set_caption(f'Snake Game | Pontos: {self.pontos}')
 
 
+class Fruta:
+    cor = (255, 0, 0)
+    tamanho = (20, 20)
+
+    def __init__(self, cobra):
+        self.textura = pygame.Surface(self.tamanho)
+        self.textura.fill(self.cor)
+
+        self.posicao = Fruta.criar_posicao(cobra)
+
+    @staticmethod
+    def criar_posicao(cobra):
+        posicao_x = random.randint(0, 30) * 20
+        posicao_y = random.randint(0, 16) * 20
+
+        if (posicao_x, posicao_y) in cobra.corpo:
+            Fruta.criar_posicao(cobra)
+        else:
+            return posicao_x, posicao_y
+
+    def desenhar(self, tela_jogo):
+        tela_jogo.blit(self.textura, self.posicao)
+
+
 if __name__ == "__main__":
     # Configurações do Jogo
     pygame.init()
@@ -96,8 +104,8 @@ if __name__ == "__main__":
     pygame.display.set_caption('Snake Game')
     PRETO = (0, 0, 0)
 
-    fruta = Fruta()
     cobra = Snake()
+    fruta = Fruta(cobra)
 
     while True:
         for event in pygame.event.get():
@@ -118,12 +126,12 @@ if __name__ == "__main__":
                     cobra.direita()
                     break
 
-        if cobra.colisao_parede_corpo():
-            cobra = Snake()
-
         if cobra.colisao_fruta(fruta):
             cobra.comer_fruta()
-            fruta = Fruta()
+            fruta = Fruta(cobra)
+
+        if cobra.colisao_parede_corpo():
+            cobra = Snake()
 
         cobra.andar()
 
