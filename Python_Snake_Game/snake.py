@@ -69,6 +69,7 @@ class Snake:
         self.pontos += 1
         pygame.display.set_caption(f'Snake Game | Pontos: {self.pontos}')
 
+
 class Fruta:
     cor = (255, 0, 0)
     tamanho = (20, 20)
@@ -91,7 +92,6 @@ class Fruta:
 
     def desenhar(self, tela_jogo):
         tela_jogo.blit(self.textura, self.posicao)
-
 
 
 if __name__ == "__main__":
@@ -125,7 +125,6 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_RIGHT:
                     cobra.direita()
                     break
-
 
         if cobra.colisao_fruta(fruta):
             cobra.comer_fruta()
