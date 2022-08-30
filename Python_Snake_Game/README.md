@@ -27,5 +27,5 @@ pipenv install
 
 Executar terminal e siga as instruções:
 '''
-pipenv run python .py 
+pipenv run python snake.py 
 '''
