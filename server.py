@@ -1,8 +1,13 @@
 from evento_online import EventoOnline
+from evento import Evento
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
+evento_online = EventoOnline("Live de Python")
+evento_online2 = EventoOnline("Live de JavaScript")
+evento = Evento("Aula de Python", "Rio de Janeiro")
 
+eventos = [evento_online,evento_online2, evento]
 
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -26,13 +31,44 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
+
+            css = """
+            <style>
+                table {
+                    bordr-collapse: collapse;
+                }
+                td, th {
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                }
+            </style>
+            """
+            
+            html = ""
+            for evento in eventos:
+                html += f"""
+                <tr>
+                    <td>{evento.id}</td>
+                    <td>{evento.nome}</td>
+                    <td>{evento.local}</td>
+                </tr>"""
+            
             data = f"""
             <html>
                 <head>
-                    <title> Eventos </title>
+                    <title> Eventos </title> 
+                    {css}
                 </head>
                 <body>
-
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Local</th>
+                        </tr>
+                        {html}
+                    </table>
                 </body>
             </html>
             """
