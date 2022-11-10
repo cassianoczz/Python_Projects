@@ -2,6 +2,7 @@ from evento_online import EventoOnline
 from evento import Evento
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
+import json
 
 evento_online = EventoOnline("Live de Python")
 evento_online2 = EventoOnline("Live de JavaScript")
@@ -73,6 +74,20 @@ class SimpleHandler(BaseHTTPRequestHandler):
             </html>
             """
             self.wfile.write(data.encode())
+        elif self.path == "/api/eventos":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            list_dict_json_eventos = []
+            for evento in eventos:
+                list_dict_json_eventos.append({
+                    "id": evento.id,
+                    "nome": evento.nome,
+                    "local": evento.local,
+                })
+            data = json.dumps(list_dict_json_eventos).encode()
+            self.wfile.write(data)
 
 server = HTTPServer(('localhost', 80), SimpleHandler)
 server.serve_forever()
