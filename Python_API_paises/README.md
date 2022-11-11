@@ -26,7 +26,7 @@ pipenv install
 ```
 
 Executar terminal e siga as instruções:
-'''
+```
 python paises.py
-'''
+```
 
