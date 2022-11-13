@@ -58,6 +58,23 @@ def ler_eventos_id(id):
     evento = pegar_eventos_ou_404(id)
     return jsonify(evento.__dict__)
 
+@app.route("/api/eventos/<int:id>/", methods=['PUT'])
+def atualizar_eventos_id(id):
+
+    dados_request = request.get_json()
+    nome = dados_request.get("nome")
+    local = dados_request.get("local")
+    if not nome:
+        abort(400, "'nome' precisa ser informado")
+    if not local:
+        abort(400, "'local' precisa ser informado")
+        
+    evento = pegar_eventos_ou_404(id)
+    evento.nome = nome
+    evento.local = local
+    return jsonify(evento.__dict__)
+
+
 @app.route("/api/eventos/<int:id>/", methods=['DELETE'])
 def deletar_eventos_id(id):
     evento = pegar_eventos_ou_404(id)
