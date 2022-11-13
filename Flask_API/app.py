@@ -75,6 +75,28 @@ def atualizar_eventos_id(id):
     return jsonify(evento.__dict__)
 
 
+@app.route("/api/eventos/<int:id>/", methods=['PATCH'])
+def atualizar_parcial_eventos_id(id):
+
+    dados_request = request.get_json()
+
+    evento = pegar_eventos_ou_404(id)
+
+    if "nome" in dados_request.keys():
+        nome = dados_request.get("nome")
+        if not nome:
+            abort(400, "'nome' precisa ser informado")
+        evento.nome = nome
+
+    if "local" in dados_request.keys():    
+        local = dados_request.get("local")
+        if not local:
+            abort(400, "'local' precisa ser informado")
+        evento.local = local
+    
+    return jsonify(evento.__dict__)
+
+
 @app.route("/api/eventos/<int:id>/", methods=['DELETE'])
 def deletar_eventos_id(id):
     evento = pegar_eventos_ou_404(id)
