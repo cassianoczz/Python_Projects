@@ -1,0 +1,21 @@
+<html>
+    <h1>Evento: {{evento.nome}}</h1>
+    <p>Categoria: {{evento.categoria.nome}}</p>
+    <p>Local - Link: {% firstof  evento.local evento.link %}</p>
+    <p>Data: 
+        {% if evento.data %}
+            {{evento.data | date:"d/m/Y"}}
+        {% else %}
+            a definir
+        {% endif %}
+    </p>
+    <p>Quantidade de participantes: {{ evento.participantes }}</p>
+    <br/>
+    <form action="{% url 'participar_evento' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="evento_id" value="{{ evento.id }}">
+        <input type="submit" value="Participar">
+    </form>
+    <p><a href="{% url 'listar_eventos' %}">Ir para listagem de eventos</a></p>
+</html>
+
