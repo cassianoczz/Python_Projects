@@ -33,7 +33,7 @@
                         {% if evento.data %}
                             {{evento.data | date:"d/m/Y"}}
                         {% else %}
-                            a definir
+                            A definir
                         {% endif %}
                     </td>
                     <td><a href="{% url 'ler_eventos' evento.id %}">Ver detalhes</a></td>

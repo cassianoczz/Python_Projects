@@ -6,7 +6,7 @@ from django.urls import reverse
 from datetime import date
 
 def listar_eventos(response):
-    eventos = Evento.objects.filter(data__gte=date.today()).order_by("data")
+    eventos = Evento.objects.exclude(data__lt=date.today()).order_by("data")
     return render(response, 'listar_eventos.html', {'eventos': eventos})
 
 def ler_eventos(response, id):
