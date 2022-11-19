@@ -1,3 +1,8 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 
-# Create your tests here.
+class TestePaginaInicial(TestCase):
+
+    def teste_rota_raiz_lista_eventos(self):
+        client = Client()
+        response = client.get("/")
+        self.assertTemplateUsed(response, "listar_eventos.html")
