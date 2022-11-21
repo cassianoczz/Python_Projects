@@ -1,13 +1,24 @@
+from agenda_app.models import Agendamento
+
 from rest_framework import serializers
 from django.utils import timezone
-
-from agenda_app.models import Agendamento
 
 class AgendamentoSerializer(serializers.Serializer):
     nome_cliente = serializers.CharField(max_length=256)
     data_horario_agendamento = serializers.DateTimeField()
     telefone_cliente = serializers.CharField(max_length=14)
     email_cliente = serializers.EmailField()
+
+    def validate(self, attrs):
+        telefone_cliente = attrs.get("telefone_cliente", "")
+        if not telefone_cliente.startswith("+55"):
+            raise serializers.ValidationError("Telefone deve ser brasileiro.")
+        return attrs
+
+    def validate_data_horario_agendamento(self, value):
+        if value < timezone.now():
+            raise serializers.ValidationError("Data deve ser maior ou igual a data atual.")
+        return value
             
 
     def create(self, validated_data):
