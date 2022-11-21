@@ -4,6 +4,7 @@ from agenda_app.serializers import AgendamentoSerializer
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 @api_view(http_method_names=["GET", "POST"])
 def agendamento_list(resquest):
@@ -24,7 +25,7 @@ def agendamento_list(resquest):
         return JsonResponse(dados_serializado.errors, status=400)
 
 
-@api_view(http_method_names=["GET", "PATCH"])
+@api_view(http_method_names=["GET", "PATCH", "DELETE"])
 def agendamento_details(request, id):
     agendamento_id = get_object_or_404(Agendamento, id=id)
     if request.method == "GET":
@@ -41,3 +42,7 @@ def agendamento_details(request, id):
             agendamento_id.save()
             return JsonResponse(dados_valid, status=200)
         return JsonResponse(agendamento_serializado.errors, status=400)
+    if request.method == "DELETE":
+        #agendamento_id.cancelando = True AO INVEZ DE DELETAR O ENVENTO PARA MANTER HISTORICO
+        agendamento_id.delete()
+        return Response(status=204)
