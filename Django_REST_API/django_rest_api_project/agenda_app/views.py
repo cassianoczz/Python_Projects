@@ -13,6 +13,7 @@ def agendamento_list(resquest):
         lista_agendamento = AgendamentoSerializer(agendamento_qs, many=True)
         return JsonResponse({'data': lista_agendamento.data})
 
+
     if resquest.method == "POST":
         dados_serializado = AgendamentoSerializer(data=resquest.data)
         if dados_serializado.is_valid():
