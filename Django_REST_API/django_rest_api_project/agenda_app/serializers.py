@@ -3,7 +3,8 @@ from agenda_app.models import Agendamento
 from rest_framework import serializers
 from django.utils import timezone
 
-class AgendamentoSerializer(serializers.Serializer):
+
+class AgendamentoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Agendamento
