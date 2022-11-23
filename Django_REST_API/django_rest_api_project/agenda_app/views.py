@@ -1,45 +1,42 @@
 from agenda_app.models import Agendamento
 from agenda_app.serializers import AgendamentoSerializer
-
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse, Http404
-
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework import mixins
+from rest_framework import generics
 
 
-class AgendamentoList(APIView):
-    def get(self, request):
-        agendamento_qs = Agendamento.objects.all()
-        lista_agendamento = AgendamentoSerializer(agendamento_qs, many=True)
-        return JsonResponse({'data': lista_agendamento.data})
+class AgendamentoList(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    generics.GenericAPIView
+):
+    queryset = Agendamento.objects.all()
+    serializer_class = AgendamentoSerializer
 
-    def post(self, request):
-        dados_serializado = AgendamentoSerializer(data=request.data)
-        if dados_serializado.is_valid():
-            dados_serializado.save()
-            return JsonResponse(dados_serializado.data, status=HTTP_201_CREATED)
-        return JsonResponse(dados_serializado.errors, status=HTTP_400_BAD_REQUEST)
-     
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-class AgendamentoDetails(APIView):
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
-    def get(self, request, id):
-        agendamento_id = get_object_or_404(Agendamento, id=id)
-        agendamento_serializado = AgendamentoSerializer(agendamento_id)
-        return JsonResponse(agendamento_serializado.data)
 
-    def patch(self, request, id):
-        agendamento_id = get_object_or_404(Agendamento, id=id)
-        agendamento_serializado = AgendamentoSerializer(agendamento_id, data=request.data, partial=True)
-        if agendamento_serializado.is_valid():
-            agendamento_serializado.save()
-            return JsonResponse(agendamento_serializado.data, status=HTTP_200_OK)
-        return JsonResponse(agendamento_serializado.errors, status=HTTP_400_BAD_REQUEST)
+class AgendamentoDetails(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView
+):
 
-    def delete(self, request, id):
-        agendamento_id = get_object_or_404(Agendamento, id=id)
-        # agendamento_id.cancelando = True AO INVEZ DE DELETAR O ENVENTO PARA MANTER HISTORICO
-        agendamento_id.delete()
-        return Response(status=204)
+    queryset = Agendamento.objects.all()
+    serializer_class = AgendamentoSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)

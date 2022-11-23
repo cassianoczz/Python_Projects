@@ -4,5 +4,5 @@ from django.urls import path
 
 urlpatterns = [
     path('agendamentos/', AgendamentoList.as_view()),
-    path('agendamentos/<int:id>', AgendamentoDetails.as_view()),
+    path('agendamentos/<int:pk>', AgendamentoDetails.as_view()),
 ]
