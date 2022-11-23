@@ -9,9 +9,8 @@ class TestListagemAgendamentos(APITestCase):
 
     def test_listagem_vazia(self):
         resposta = self.client.get('/api/agendamentos/')
-        dados_esperados = {'data': []}
         dados_resposta = json.loads(resposta.content)
-        self.assertEqual(dados_resposta, dados_esperados)
+        self.assertEqual(dados_resposta, [])
 
     def test_listagem_de_agendamentos_criados(self):
         Agendamento.objects.create(
@@ -30,7 +29,7 @@ class TestListagemAgendamentos(APITestCase):
         }
         resposta = self.client.get('/api/agendamentos/')
         dados_resposta = json.loads(resposta.content)
-        self.assertEqual(dados_resposta['data'][0], agendamento_serializado)
+        self.assertEqual(dados_resposta, [agendamento_serializado])
 
 
 class TestCriacaoAgendamento(APITestCase):
@@ -47,7 +46,7 @@ class TestCriacaoAgendamento(APITestCase):
         dados_resposta_post = json.loads(resposta_post.content)
         dados_resposta_get = json.loads(resposta_get.content)
         self.assertEqual(resposta_post.status_code, 201)
-        self.assertEqual(dados_resposta_get['data'][0], dados_resposta_post)
+        self.assertEqual(dados_resposta_get, [dados_resposta_post])
 
     def test_cria_agendamento_vazio_status_400(self):
         agendamento_serializado = {
