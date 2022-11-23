@@ -2,41 +2,44 @@ from agenda_app.models import Agendamento
 from agenda_app.serializers import AgendamentoSerializer
 
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from rest_framework.decorators import api_view
+from django.http import JsonResponse, Http404
+
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from rest_framework.views import APIView
 from rest_framework.response import Response
 
-@api_view(http_method_names=["GET", "POST"])
-def agendamento_list(resquest):
-    if resquest.method == "GET":
+
+class AgendamentoList(APIView):
+    def get(self, request):
         agendamento_qs = Agendamento.objects.all()
         lista_agendamento = AgendamentoSerializer(agendamento_qs, many=True)
         return JsonResponse({'data': lista_agendamento.data})
 
-
-    if resquest.method == "POST":
-        dados_serializado = AgendamentoSerializer(data=resquest.data)
+    def post(self, request):
+        dados_serializado = AgendamentoSerializer(data=request.data)
         if dados_serializado.is_valid():
             dados_serializado.save()
-            return JsonResponse(dados_serializado.data, status=201)
-        return JsonResponse(dados_serializado.errors, status=400)
+            return JsonResponse(dados_serializado.data, status=HTTP_201_CREATED)
+        return JsonResponse(dados_serializado.errors, status=HTTP_400_BAD_REQUEST)
+     
 
+class AgendamentoDetails(APIView):
 
-@api_view(http_method_names=["GET", "PATCH", "DELETE"])
-def agendamento_details(request, id):
-    agendamento_id = get_object_or_404(Agendamento, id=id)
-    if request.method == "GET":
+    def get(self, request, id):
+        agendamento_id = get_object_or_404(Agendamento, id=id)
         agendamento_serializado = AgendamentoSerializer(agendamento_id)
         return JsonResponse(agendamento_serializado.data)
 
-    if request.method == "PATCH":
+    def patch(self, request, id):
+        agendamento_id = get_object_or_404(Agendamento, id=id)
         agendamento_serializado = AgendamentoSerializer(agendamento_id, data=request.data, partial=True)
         if agendamento_serializado.is_valid():
             agendamento_serializado.save()
-            return JsonResponse(agendamento_serializado.data, status=200)
-        return JsonResponse(agendamento_serializado.errors, status=400)
+            return JsonResponse(agendamento_serializado.data, status=HTTP_200_OK)
+        return JsonResponse(agendamento_serializado.errors, status=HTTP_400_BAD_REQUEST)
 
-    if request.method == "DELETE":
-        #agendamento_id.cancelando = True AO INVEZ DE DELETAR O ENVENTO PARA MANTER HISTORICO
+    def delete(self, request, id):
+        agendamento_id = get_object_or_404(Agendamento, id=id)
+        # agendamento_id.cancelando = True AO INVEZ DE DELETAR O ENVENTO PARA MANTER HISTORICO
         agendamento_id.delete()
         return Response(status=204)
