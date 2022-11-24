@@ -3,7 +3,7 @@ from django.db import models
 
 class Agendamento(models.Model):
     prestador = models.ForeignKey(
-        'auth.User', 
+        'auth.User',
         related_name='agendamentos',
         on_delete=models.CASCADE
         )
