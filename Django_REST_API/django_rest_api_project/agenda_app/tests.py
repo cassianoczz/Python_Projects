@@ -1,4 +1,5 @@
 from agenda_app.models import Agendamento
+from django.contrib.auth.models import User
 
 from rest_framework.test import APITestCase
 from datetime import datetime, timezone
@@ -13,7 +14,15 @@ class TestListagemAgendamentos(APITestCase):
         self.assertEqual(dados_resposta, [])
 
     def test_listagem_de_agendamentos_criados(self):
+        prestador = User.objects.create(
+            id= 1,
+            password= 123,
+            is_superuser=1,
+            username="admin",
+        )
+
         Agendamento.objects.create(
+            prestador=prestador,
             nome_cliente="Cassiano",
             data_horario_agendamento=datetime(2022, 11, 1, tzinfo=timezone.utc),
             telefone_cliente='+5549',
@@ -22,19 +31,29 @@ class TestListagemAgendamentos(APITestCase):
 
         agendamento_serializado = {
             "id": 1,
+            "prestador": "admin",
             "nome_cliente": "Cassiano",
             "data_horario_agendamento": "2022-11-01T00:00:00Z",
             "telefone_cliente": '+5549',
             "email_cliente": 'meu@com.br'
         }
-        resposta = self.client.get('/api/agendamentos/')
+        resposta = self.client.get('/api/agendamentos/?prestador=admin')
         dados_resposta = json.loads(resposta.content)
         self.assertEqual(dados_resposta, [agendamento_serializado])
 
 
 class TestCriacaoAgendamento(APITestCase):
     def test_cria_agendamento(self):
+        User.objects.create(
+            id=1,
+            password=123,
+            is_superuser=1,
+            username="admin",
+        )
+
         agendamento_serializado = {
+            "id": 1,
+            "prestador": "admin",
             "nome_cliente": "Cassiano",
             "data_horario_agendamento": "2022-12-01T00:00:00Z",
             "telefone_cliente": '+5549',
@@ -42,7 +61,7 @@ class TestCriacaoAgendamento(APITestCase):
         }
 
         resposta_post = self.client.post('/api/agendamentos/', agendamento_serializado, format='json')
-        resposta_get = self.client.get('/api/agendamentos/')
+        resposta_get = self.client.get('/api/agendamentos/?prestador=admin')
         dados_resposta_post = json.loads(resposta_post.content)
         dados_resposta_get = json.loads(resposta_get.content)
         self.assertEqual(resposta_post.status_code, 201)
