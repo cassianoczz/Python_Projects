@@ -1,5 +1,8 @@
 from agenda_app.models import Agendamento
-from agenda_app.serializers import AgendamentoSerializer
+from agenda_app.serializers import AgendamentoSerializer, PrestadorSerializer
+
+
+from django.contrib.auth.models import User
 from rest_framework import generics, permissions
 
 
@@ -19,6 +22,13 @@ class IsPrestador(permissions.BasePermission):
         if obj.prestador == request.user:
             return True
         return False
+
+
+class PrestadorList(generics.ListAPIView):
+
+    permission_classes = [permissions.IsAdminUser]
+    serializer_class = PrestadorSerializer
+    queryset = User.objects.all()
 
 
 class AgendamentoList(generics.ListCreateAPIView):
