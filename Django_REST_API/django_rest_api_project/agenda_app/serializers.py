@@ -31,3 +31,12 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         if not telefone_cliente.startswith("+55"):
             raise serializers.ValidationError("Telefone deve ser brasileiro.")
         return attrs
+
+
+class PrestadorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'agendamentos']
+  
+    agendamentos = AgendamentoSerializer(many=True, read_only=True)
