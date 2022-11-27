@@ -4,7 +4,7 @@ from agenda_app.utils import get_horarios_disponiveis
 
 
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from rest_framework.response import Response
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 
@@ -53,6 +53,7 @@ class AgendamentoDetails(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AgendamentoSerializer
     queryset = Agendamento.objects.all()
 
+
 @api_view(http_method_names=["GET"])
 def get_horarios(request):
     data = request.query_params.get('data')
@@ -61,4 +62,9 @@ def get_horarios(request):
     else:
         data = datetime.fromisoformat(data).date()
     horario_disponiveis = sorted(list(get_horarios_disponiveis(data)))
-    return JsonResponse(horario_disponiveis, safe=False)
+    return Response(horario_disponiveis, safe=False)
+
+
+@api_view(http_method_names=['GET'])
+def healthcheck(request):
+    return Response({"status": "OK"}, status=200)
