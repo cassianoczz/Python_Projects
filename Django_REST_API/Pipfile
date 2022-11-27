@@ -7,8 +7,12 @@ name = "pypi"
 django = "*"
 djangorestframework = "*"
 requests = "*"
+python-decouple = "*"
 
 [dev-packages]
+pytest-cov = "*"
+codecov = "*"
+pytest-django = "*"
 
 [requires]
 python_version = "3.10"
