@@ -62,7 +62,7 @@ def get_horarios(request):
     else:
         data = datetime.fromisoformat(data).date()
     horario_disponiveis = sorted(list(get_horarios_disponiveis(data)))
-    return Response(horario_disponiveis, safe=False)
+    return Response(horario_disponiveis)
 
 
 @api_view(http_method_names=['GET'])
