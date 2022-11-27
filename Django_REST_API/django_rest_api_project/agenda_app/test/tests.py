@@ -5,8 +5,22 @@ from rest_framework.test import APITestCase
 from datetime import datetime, timezone
 import json
 
+from unittest import mock
 
-class TestListagemAgendamentos(APITestCase):
+
+class AgendamentoAPITestCase(APITestCase):
+    def setUp(self) -> None:
+        self.prestador = User.objects.create(
+            id=1,
+            username="admin",
+            password='123',
+            is_superuser=1,
+        )
+        self.client.login(username='admin', password=123)
+        return super().setUp()
+
+
+class TestListagemAgendamentos(AgendamentoAPITestCase):
 
     def test_listagem_vazia(self):
         resposta = self.client.get('/api/agendamentos/')
@@ -14,15 +28,9 @@ class TestListagemAgendamentos(APITestCase):
         self.assertEqual(dados_resposta, [])
 
     def test_listagem_de_agendamentos_criados(self):
-        prestador = User.objects.create(
-            id= 1,
-            password= 123,
-            is_superuser=1,
-            username="admin",
-        )
 
         Agendamento.objects.create(
-            prestador=prestador,
+            prestador=self.prestador ,
             nome_cliente="Cassiano",
             data_horario_agendamento=datetime(2022, 11, 1, tzinfo=timezone.utc),
             telefone_cliente='+5549',
@@ -42,14 +50,8 @@ class TestListagemAgendamentos(APITestCase):
         self.assertEqual(dados_resposta, [agendamento_serializado])
 
 
-class TestCriacaoAgendamento(APITestCase):
+class TestCriacaoAgendamento(AgendamentoAPITestCase):
     def test_cria_agendamento(self):
-        User.objects.create(
-            id=1,
-            password=123,
-            is_superuser=1,
-            username="admin",
-        )
 
         agendamento_serializado = {
             "id": 1,
@@ -107,3 +109,17 @@ class TestCriacaoAgendamento(APITestCase):
         }
         resposta_post = self.client.post('/api/agendamentos/', agendamento_serializado, format='json')
         self.assertEqual(resposta_post.status_code, 400)
+
+
+class TestGetHorarios(APITestCase):
+    @mock.patch('agenda_app.libs.valida_feriados.eh_feriado', return_value=True)
+    def test_quando_e_data_feriado(self, _):
+        resposta = self.client.get('/api/horarios/?data=2022-12-25')
+        self.assertEqual(resposta.data, [])
+
+    @mock.patch('agenda_app.libs.valida_feriados.eh_feriado', return_value=False)
+    def test_quando_data_dia_comum_retorna_lista_com_horarios(self, _):
+        resposta = self.client.get('/api/horarios/?data=2022-12-24')
+        self.assertNotEqual(resposta.data, [])
+        self.assertEqual(resposta.data, datetime(2022, 12, 24, 9, tzinfo=timezone.utc))
+        self.assertEqual(resposta.data, datetime(2022, 12, 24, 16, 30, tzinfo=timezone.utc))
