@@ -2,13 +2,14 @@ from agenda_app.models import Agendamento
 from agenda_app.serializers import AgendamentoSerializer, PrestadorSerializer
 from agenda_app.utils import get_horarios_disponiveis
 
-
+from django.http.response import HttpResponse 
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework import generics, permissions
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 
-from datetime import datetime
+import csv
+from datetime import date, datetime
 
 
 class IsOwnerOrCreateOnly(permissions.BasePermission):
@@ -34,6 +35,33 @@ class PrestadorList(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser]
     serializer_class = PrestadorSerializer
     queryset = User.objects.all()
+
+
+@api_view(http_method_names=["GET"])
+@permission_classes([permissions.IsAdminUser])
+def relatorio_prestador(request):
+    relatorio_csv = request.query_params.get('formato')
+    prestadores = User.objects.all()
+    serializer = PrestadorSerializer(prestadores, many=True)
+    if relatorio_csv == 'csv':
+        resposta_csv = HttpResponse(
+            content_type='text/csv',
+            headers={'Content-Disposition': f'attachment; filename="relatorio_prestador_{date.today()}.csv"'},
+        )
+        arquivo_csv = csv.writer(resposta_csv)
+        for prestador in serializer.data:
+            agendamentos = prestador['agendamentos']
+            for agendamento in agendamentos:
+                arquivo_csv.writerow([
+                    agendamento['prestador'],
+                    agendamento['nome_cliente'],
+                    agendamento['data_horario_agendamento'],
+                    agendamento['telefone_cliente'],
+                    agendamento['email_cliente']
+                ])
+        return resposta_csv
+    else:
+        return Response(serializer.data)
 
 
 class AgendamentoList(generics.ListCreateAPIView):
